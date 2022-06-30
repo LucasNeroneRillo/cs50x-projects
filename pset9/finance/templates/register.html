@@ -1,0 +1,204 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block main %}
+
+    <form action="/register" method="post" id="registration-form">
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text" id="username">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="password" placeholder="Password" type="password" id="password">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="confirmation" placeholder="Confirm password" type="password" id="confirmation">
+        </div>
+        <div>
+            <div style="display: inline-block">
+                <div id="username-check-div" hidden="true">
+                    <p class="input-requirements" id="CheckUsername">&#x2715; Username must contain 6-40 characters</p>
+                </div>
+                <div id="password-check-div" hidden="true">
+                    <p class="input-requirements" id="CheckSize">&#x2715; Password must contain 8-200 characters</p>
+                    <p class="input-requirements" id="CheckUpper">&#x2715; Password must contain an uppercase letter</p>
+                    <p class="input-requirements" id="CheckLower">&#x2715; Password must contain a lowercase letter</p>
+                    <p class="input-requirements" id="CheckNumber">&#x2715; Password must contain a number</p>
+                    <p class="input-requirements" id="CheckSymbol">&#x2715; Password must contain a symbol</p>
+                </div>
+                <div id="confirmation-check-div" hidden="true">
+                    <p class="input-requirements" id="CheckMatch">&#x2715; Passwords must match</p>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Register</button>
+    </form>
+
+
+    <!-- Check if input requirements are met -->
+    <script>
+    /*
+        let username = document.getElementById('username');
+        let usernameCheckDiv = document.getElementById('username-check-div');
+        let password = document.getElementById('password');
+        let passwordCheckDiv = document.getElementById('password-check-div');
+        let confirmation = document.getElementById('confirmation');
+        let confirmationCheckDiv = document.getElementById('confirmation-check-div');
+
+        // Create variables to access the input check elements
+        let elements = {};
+        elements["size"] = document.getElementById('CheckSize');
+        elements["upper"] = document.getElementById('CheckUpper');
+        elements["lower"] = document.getElementById('CheckLower');
+        elements["number"] = document.getElementById('CheckNumber');
+        elements["symbol"] = document.getElementById('CheckSymbol');
+        let checkMatch = document.getElementById('CheckMatch');
+        let checkUsername = document.getElementById('CheckUsername');
+
+        // Create regular expression pattern checkers
+        let regex = {};
+        regex["size"] = new RegExp('(?=.{8,200})');
+        regex["upper"] = new RegExp('(?=.*[A-Z])');
+        regex["lower"] = new RegExp('(?=.*[a-z])');
+        regex["number"] = new RegExp('(?=.*[0-9])');
+        regex["symbol"] = new RegExp('(?=.*[^A-Za-z0-9])');
+        usernameRegex = new RegExp('(?=.{6,40})');
+
+        // Create the text to be displayed in the password check element
+        let text = {};
+        text["size"] = "Password must contain 8-200 characters";
+        text["upper"] = "Password must contain an uppercase letter";
+        text["lower"] = "Password must contain a lowercase letter";
+        text["number"] = "Password must contain a number";
+        text["symbol"] = "Password must contain a symbol";
+        text["match"] = "Passwords must match";
+        text["username"] = "Username must contain 6-40 characters";
+
+        // Check if username is valid (6-40 chars) after keystroke
+        username.addEventListener("keyup", function() {
+
+            // Make the username requirement check visible and the others invisible
+            usernameCheckDiv.hidden = false;
+            passwordCheckDiv.hidden = true;
+            confirmationCheckDiv.hidden = true;
+
+            // Check password requirements and update view accordingly
+            checkUsernameRequirements();
+        });
+
+        // Check if password is valid after keystroke
+        password.addEventListener("keyup", function() {
+
+            // Make the password requirement check visible and the others invisible
+            usernameCheckDiv.hidden = true;
+            passwordCheckDiv.hidden = false;
+            confirmationCheckDiv.hidden = true;
+
+            // Check password requirements and update view accordingly
+            checkPasswordRequirements();
+
+            // If user already typed a confirmation, check if matches the password
+            if (confirmation.value) {
+                confirmationCheckDiv.hidden = false;
+                checkPasswordMatch();
+            }
+        });
+
+        // Check if passwords match after keystroke
+        confirmation.addEventListener("keyup", function() {
+
+            // Make the password requirement check visible
+            usernameCheckDiv.hidden = true;
+            passwordCheckDiv.hidden = false;
+            confirmationCheckDiv.hidden = false;
+
+            // Compare password/confirmation and update view accordingly
+            checkPasswordMatch();
+        });
+
+        // Function for checking username requirements and updating view accordingly
+        function checkUsernameRequirements() {
+            let valid = true;
+            if (usernameRegex.test(username.value)) {
+                checkUsername.textContent = "\u2713 " + text["username"];
+                checkUsername.style.color = "green";
+            }
+            else {
+                checkUsername.textContent = "\u2715 " + text["username"];
+                checkUsername.style.color = "red";
+                valid = false;
+            }
+            return valid;
+        }
+
+        // Function for comparing password/confirmation and updating view accordingly
+        function checkPasswordMatch() {
+            if (password.value === confirmation.value) {
+                checkMatch.textContent = "\u2713 " + text["match"];
+                checkMatch.style.color = "green";
+                return true;
+            }
+            else {
+                checkMatch.textContent = "\u2715 " + text["match"];
+                checkMatch.style.color = "red";
+                return false;
+            }
+        }
+
+        // Function for checking password requirements and updating view accordingly
+        function checkPasswordRequirements() {
+            let valid = true;
+            let itens = ["size", "upper", "lower", "number", "symbol"];
+            itens.forEach(function(item) {
+                if (regex[item].test(password.value)) {
+                    elements[item].textContent = "\u2713 " + text[item];
+                    elements[item].style.color = "green";
+                }
+                else {
+                    elements[item].textContent = "\u2715 " + text[item];
+                    elements[item].style.color = "red";
+                    valid = false;
+                }
+            });
+            return valid;
+        }
+
+        // Check if requirements were met before submitting form
+        document.getElementById('registration-form').addEventListener('submit', function(event){
+            if (!username.value || !password.value || !confirmation.value) {
+                event.preventDefault();
+                alert("To register, you must answer all fields!");
+                return false;
+            }
+            if (!checkUsernameRequirements()) {
+                event.preventDefault();
+                alert("To register, your username must meet the requirements below!");
+                usernameCheckDiv.hidden = false;
+                passwordCheckDiv.hidden = true;
+                confirmationCheckDiv.hidden = true;
+                return false;
+            }
+            if (!checkPasswordRequirements()) {
+                event.preventDefault();
+                alert("To register, your password must meet the requirements below!");
+                usernameCheckDiv.hidden = true;
+                passwordCheckDiv.hidden = false;
+                confirmationCheckDiv.hidden = false;
+                return false;
+            }
+            if (!checkPasswordMatch()) {
+                event.preventDefault();
+                alert("To register, your password and its confirmation must match!");
+                usernameCheckDiv.hidden = true;
+                passwordCheckDiv.hidden = true;
+                confirmationCheckDiv.hidden = false;
+                return false;
+            }
+        });
+        */
+    </script>
+
+
+{% endblock %}

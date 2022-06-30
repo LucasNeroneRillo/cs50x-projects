@@ -1,0 +1,20 @@
+sort1 uses: bubble sort
+
+How do you know?:
+The difference in running time between reversed list and sorted list is the biggest of all three "sorts".
+That is consistent with the fact that bubble sort has big O of nˆ2 and omega of n.
+Besides, reversed list is the worst case scenario for bubble sort, and sorted list is the best case scenario.
+
+sort2 uses: merge sort
+
+How do you know?:
+There is little change in running time between reversed list and sorted list,
+and that time is way smaller than that of sort3.
+That is consistent with the fact that merge sort has big O of n*log(n) and omega of n*log(n).
+
+sort3 uses: selection sort
+
+How do you know?:
+There is little change in running time between reversed list and sorted list,
+and that time is way smallerbigger than that of sort2.
+That is consistent with the fact that selection sort has big O of nˆ2 and omega of nˆ2.
